@@ -1,4 +1,7 @@
-import {request,response} from "express"
+import { db } from "../db/database.js"
+import { eq } from "drizzle-orm"
+import { request,response } from "express"
+import { cards } from "../db/schema.js"
 
 
 /**
@@ -8,8 +11,16 @@ import {request,response} from "express"
  * @returns 
  */
 export const getCard = async (req, res) => {
-    res.status(200).send({message : "WIP"})
-    //TODO
+    try {
+        const { id } = req.params
+
+        const result = await db.select().from(cards).where(eq(id, cards.id))
+        res.status(200).json(result)
+    } catch (error) {
+        console.error(error)
+
+        res.status(500).send({error : "Failed to querry cards"})
+    }
 }
 
 
