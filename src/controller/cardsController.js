@@ -55,6 +55,14 @@ export const createCard = async (req, res) => {
  * @returns 
  */
 export const deleteCard = async (req, res) => {
-    res.status(201).send({message : "WIP"})
-    //TODO
+    try {
+        const { id } = req.params
+        
+        const result = await db.delete(cards).where(eq(id, cards.id))
+        res.status(201).json(result)
+    } catch (error) {
+        console.log(error)
+
+        res.status(500).send({error : "Failed to delete card"})
+    }
 }
