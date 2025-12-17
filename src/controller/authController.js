@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 import { db } from "../db/database.js"
 import { users } from "../db/schema.js"
 import { eq } from "drizzle-orm"
-import { email } from "zod"
+import { randomUUID } from "crypto"
 
 /**
  * Register a new user
@@ -21,6 +21,7 @@ export const registerUser = async (req, res)=>{
 
     try {
         const [newUser] = await db.insert(users).values({
+            id: randomUUID(),
             mail,
             name,
             surname,
