@@ -40,8 +40,7 @@ export const patchCard = async (req, res) => {
             recto: req.body.recto || current_card.recto,
             verso: req.body.verso || current_card.verso,
             recto_url: req.body.recto_url || current_card.recto_url,
-            verso_url: req.body.verso_url || current_card.verso_url,
-            collection_id: req.body.collection_id || current_card.collection_id
+            verso_url: req.body.verso_url || current_card.verso_url
         }
 
         const [card] = await db.update(cards)

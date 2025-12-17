@@ -1,4 +1,7 @@
-import { request, response } from "express"
+import { db } from "../db/database.js"
+import { eq } from "drizzle-orm"
+import { request,response } from "express"
+import { collections } from "../db/schema.js"
 
 
 /**
@@ -8,8 +11,16 @@ import { request, response } from "express"
  * @returns 
  */
 export const getCollection = async (req, res) => {
-    res.status(200).send({message : "WIP"})
-    //TODO
+    try {
+        const { id } = req.params
+
+        const result = await db.select().from(collections).where(eq(id, collections.id))
+        res.status(200).json(result)
+    } catch (error) {
+        console.error(error)
+
+        res.status(500).send({error : "Failed to querry collection"})
+    }
 }
 
 
@@ -44,8 +55,16 @@ export const createCollection = async (req, res) => {
  * @returns 
  */
 export const deleteCollection = async (req, res) => {
-    res.status(201).send({message : "WIP"})
-    //TODO
+    try {
+            const { id } = req.params
+            
+            const result = await db.delete(collections).where(eq(id, collections.id)).returning()
+            res.status(201).json({message:"Collection successfully deleted", data: result})
+        } catch (error) {
+            console.log(error)
+    
+            res.status(500).send({error : "Failed to delete collection"})
+        }
 }
 
 
@@ -68,6 +87,30 @@ export const searchCollections = async (req, res) => {
  * @returns 
  */
 export const patchCollection = async (req, res) => {
-    res.status(200).send({message : "WIP"})
-    //TODO
+    try {
+        const { id } = req.body
+        
+        const current_collection = db.select().from(collections).where(eq(id, collections.id))
+
+        const updated_properties = { // new properties if found, else current
+            title: req.body.title || current_collection.title,
+            description: req.body.description || current_collection.description,
+            is_public: req.body.is_public || current_collection.is_public
+        }
+
+        const [collection] = await db.update(collections)
+        .set(updated_properties)
+        .where(eq(id, collections.id))
+        .returning()
+
+        if(!collection){
+            return res
+        }
+
+        res.status(200).json({message: "collection updated", data: collection})
+    } catch (error) {
+        console.log(error)
+
+        res.status(500).send({error : "Failed to patch collection"})
+    }
 }
