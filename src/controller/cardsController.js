@@ -53,7 +53,7 @@ export const patchCard = async (req, res) => {
             return res
         }
 
-        res.status(200).json({message: "question updated", data: card})
+        res.status(200).json({message: "card updated", data: card})
     } catch (error) {
         console.log(error)
 
@@ -69,8 +69,15 @@ export const patchCard = async (req, res) => {
  * @returns 
  */
 export const createCard = async (req, res) => {
-    res.status(201).send({message : "WIP"})
-    //TODO
+    try {
+        const result = await db.insert(cards).values(req.body).returning()
+
+        res.status(201).json({message:"Card successfully created", data: result})
+    } catch (error) {
+        console.log(error)
+
+        res.status(500).send({error : "Failed to create card"})
+    }
 }
 
 
