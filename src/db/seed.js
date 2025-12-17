@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { db } from "./database.js";
 import { users, collections, cards, revisings } from "./schema.js";
 import bcrypt from "bcrypt";
@@ -15,7 +16,7 @@ const seed = async ()=>{
         // Seed users
         const passwordHash = await bcrypt.hash("password123", 10);
         const user1 = {
-            id: "user-1",
+            id: randomUUID(),
             mail: "alice@example.com",
             name: "Alice",
             surname: "Smith",
@@ -23,7 +24,7 @@ const seed = async ()=>{
             role: "user"
         };
         const user2 = {
-            id: "user-2",
+            id: randomUUID(),
             mail: "bob@example.com",
             name: "Bob",
             surname: "Brown",
