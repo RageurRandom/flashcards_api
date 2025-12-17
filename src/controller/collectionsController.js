@@ -43,8 +43,15 @@ export const getMyCollections = async (req, res) => {
  * @returns 
  */
 export const createCollection = async (req, res) => {
-    res.status(200).send({message : "WIP"})
-    //TODO
+    try {
+        const result = await db.insert(collections).values(req.body).returning() // TODO l'id user ne doit pas etre renseigné
+
+        res.status(201).json({message:"Collection successfully created", data: result})
+    } catch (error) {
+        console.log(error)
+
+        res.status(500).send({error : "Failed to create collection"})
+    }
 }
 
 
