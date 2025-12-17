@@ -5,7 +5,7 @@ const router = Router()
 
 router.get('/', getAllUsers)
 router.get('/:id', getUser)
-router.delete('/', deleteUser)
+router.delete('/:id', deleteUser)
 
 
 export default router
