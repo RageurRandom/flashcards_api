@@ -8,6 +8,10 @@ export const users = sqliteTable("users", {
     surname: text().notNull(),
     password: text().notNull(),
     role: text({enum: ['admin', 'user']}).notNull().default('user'),
+    
+    createdAt: integer('created_at', { mode: 'timestamp'}).$defaultFn(
+        () => new Date()
+    ),
 });
 
 export const collections = sqliteTable("collections", {
@@ -16,6 +20,10 @@ export const collections = sqliteTable("collections", {
     description: text().notNull(),
     isPublic: integer('is_public').notNull().default(0),
     creatorId: text('creator_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+
+    createdAt: integer('created_at', { mode: 'timestamp'}).$defaultFn(
+        () => new Date()
+    ),
 });
 
 export const cards = sqliteTable("cards", {
@@ -25,6 +33,10 @@ export const cards = sqliteTable("cards", {
     rectoUrl: text('recto_url').notNull(),
     versoUrl: text('verso_url').notNull(),
     collectionId: text('collection_id').notNull().references(() => collections.id, { onDelete: 'cascade' }),
+
+    createdAt: integer('created_at', { mode: 'timestamp'}).$defaultFn(
+        () => new Date()
+    ),
 });
 
 export const revisings = sqliteTable("revising", {
@@ -32,6 +44,11 @@ export const revisings = sqliteTable("revising", {
     userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
     level : integer().notNull().default(0),
     lastRevisingDate: integer('last_revising_date').notNull().default(0),
+
+    createdAt: integer('created_at', { mode: 'timestamp'}).$defaultFn(
+        () => new Date()
+    ),
+    
 }, (table) => ({
     primaryKey: ({name: "pk_revising", columns: [table.cardId, table.userId]})
 }));

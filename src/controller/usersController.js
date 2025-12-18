@@ -36,7 +36,7 @@ export const getUser = async (req, res)=>{
  */
 export const getAllUsers = async (req, res)=>{
     try {
-        const result = await db.select().from(users).orderBy(users.name);
+        const result = await db.select().from(users).orderBy(users.createdAt);
 
         res.status(200).json(result);
     } catch (error) {
