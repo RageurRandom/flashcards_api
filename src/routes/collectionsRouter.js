@@ -8,7 +8,7 @@ const router = Router()
 
 router.get('/:id', getCollection)
 router.get('/', getMyCollections)
-router.get('/search/:title', searchCollections)
+router.get('/search/:querry', searchCollections)
 router.post('/', createCollection)
 router.patch('/', patchCollection)
 router.delete('/:id', deleteCollection)
