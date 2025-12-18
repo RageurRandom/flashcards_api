@@ -1,5 +1,6 @@
 import { Router } from "express"
-import { getCollection, searchCollections, createCollection, deleteCollection, getMyCollections, patchCollection } from "../controller/collectionsController.js"
+import { getCollection, searchCollections, createCollection,
+    deleteCollection, getMyCollections, patchCollection } from "../controller/collectionsController.js"
 
 
 const router = Router()
@@ -7,7 +8,7 @@ const router = Router()
 
 router.get('/:id', getCollection)
 router.get('/', getMyCollections)
-//TODO searchCollection route
+router.get('/search/:querry', searchCollections)
 router.post('/', createCollection)
 router.patch('/', patchCollection)
 router.delete('/:id', deleteCollection)
