@@ -10,13 +10,15 @@ https://clementcatel.notion.site/R5-05-Projet-de-groupe-2ae3b8266dbb8014b0aac386
 
 ### Initialize the database
 
-Run ``npm run db:push``, then ``npm run db:seed``
+Run ``npm run db:push``, then ``npm run db:seed`` if you want to initialize it with data.
 
-If you want a GUI for your db, run ``npm run db:studio``
+If you want a GUI to manage your database, run ``npm run db:studio`` and go to <https://local.drizzle.studio>.
 
-## Installation
+## Usage
 
+To install the server : run ``npm install``, then copy ``.env.example`` into a ```.env`` file. Finally, initialize the database.
 
+You can launch the server with ``npm run dev``. Bu default it will be listening on port 3000, but you can change that using environment variables
 
 ## Documentation
 
@@ -24,7 +26,7 @@ If you want a GUI for your db, run ``npm run db:studio``
 
 * GET ``/collections`` : return your collections
 
-* GET ``/collections/{id}`` : return the collection with the id. It needs to be public or yours
+* GET ``/collections/{id}`` : return the collection with the id. It needs to be public or yours.
 
 * GET ``/collections/search/{querry}`` : return collections with a title that contains the querry.
 It will either be public collections or your collections.
@@ -39,9 +41,9 @@ You need to provide this body :
 }
 ```
 
-* DELETE ``/collections/{id}`` : remove the collection from the database
+* DELETE ``/collections/{id}`` : remove the collection from the database. It will delete every cards in this collection.
 
-* PATCH ``/collections`` : update the collection with the provided informations
+* PATCH ``/collections`` : update the collection with the provided informations.
 
 You need to provide this body :
 
@@ -55,6 +57,10 @@ You need to provide this body :
 
 * GET ``/cards/{id}`` : return the card with the id.
 
+* GET ``/cards/from-collection/{id}`` : return every cards from the collection.
+
+* GET ``/cards/review/{id}`` : 
+
 * POST ``/cards`` : create a card.
 
 You need to provide this body :
@@ -65,9 +71,9 @@ You need to provide this body :
 }
 ```
 
-* DELETE ``/cards/{id}`` : remove the card from the database
+* DELETE ``/cards/{id}`` : remove the card from the database.
 
-* PATCH ``/cards`` : update the card with the provided informations
+* PATCH ``/cards`` : update the card with the provided informations.
 
 You need to provide this body :
 
@@ -101,10 +107,11 @@ You need to provide this body :
 
 ### Users
 
-You need to be an **administrator** to use theses routes
+You need to be an **administrator** to use theses routes.
 
-* GET ``/users/`` : return every users
+* GET ``/users/`` : return every users.
 
-* GET ``/users/{id}`` : return the user with the id
+* GET ``/users/{id}`` : return the user with the id.
 
-* DELETE ``/users/{id}`` : remove the user from the database
+* DELETE ``/users/{id}`` : remove the user from the database.
+It will remove every private collections the user made, but not the public ones.

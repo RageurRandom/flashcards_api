@@ -1,7 +1,8 @@
 import { db } from "../db/database.js"
 import { eq } from "drizzle-orm"
 import { request,response } from "express"
-import { cards } from "../db/schema.js"
+import { cards, collections } from "../db/schema.js"
+import { ca } from "zod/locales"
 
 
 /**
@@ -96,5 +97,38 @@ export const deleteCard = async (req, res) => {
         console.log(error)
 
         res.status(500).send({error : "Failed to delete card"})
+    }
+}
+
+
+/**
+ * 
+ * @param {request} req 
+ * @param {response} res 
+ * @returns 
+ */
+export const reviewCard = async (req, res) => {
+    res.status(200).send("WIP")
+
+    //TODO
+}
+
+
+/**
+ * 
+ * @param {request} req 
+ * @param {response} res 
+ * @returns 
+ */
+export const getFromCollection = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const result = await db.select().from(cards).where(eq(id, cards.collectionId))
+        res.status(200).json(result)
+    } catch (error) {
+        console.error(error)
+
+        res.status(500).send({error : "Failed to querry cards"})
     }
 }
