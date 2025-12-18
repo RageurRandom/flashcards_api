@@ -15,7 +15,7 @@ app.use(express.json())
 app.use('/cards', cardRouter)
 app.use('/collections', collectionRouter)
 app.use('/auth', authRouter)
-app.use('/users', userRouter)
+app.use('/users', userRouter) //TODO add middleware to require admin privileges to use this route
 
 
 app.listen(PORT, ()=> {

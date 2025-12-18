@@ -31,8 +31,14 @@ export const getCollection = async (req, res) => {
  * @returns 
  */
 export const getMyCollections = async (req, res) => {
-    res.status(200).send({message : "WIP"})
-    //TODO
+    try {
+        const result = await db.select().from(collections) // TODO select only collections created by the user
+        res.status(200).json(result)
+    } catch (error) {
+        console.error(error)
+
+        res.status(500).send({error : "Failed to querry collection"})
+    }
 }
 
 
