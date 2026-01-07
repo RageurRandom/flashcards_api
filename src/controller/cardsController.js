@@ -107,19 +107,6 @@ export const deleteCard = async (req, res) => {
  * @param {response} res 
  * @returns 
  */
-export const reviewCard = async (req, res) => {
-    res.status(200).send("WIP")
-
-    //TODO
-}
-
-
-/**
- * 
- * @param {request} req 
- * @param {response} res 
- * @returns 
- */
 export const getFromCollection = async (req, res) => {
     try {
         const { id } = req.params
