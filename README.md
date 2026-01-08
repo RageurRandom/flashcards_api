@@ -59,8 +59,6 @@ You need to provide this body :
 
 * GET ``/cards/from-collection/{id}`` : return every cards from the collection.
 
-* GET ``/cards/review/{id}`` : 
-
 * POST ``/cards`` : create a card.
 
 You need to provide this body :
@@ -85,23 +83,27 @@ You need to provide this body :
 
 ### Authentication
 
-* POST ``/register`` : create your account.
+* POST ``/auth/register`` : create your account.
 
-You need to provide this body :
+You need to provide this kind of body :
 
 ```json
 {
-
+    "mail":"bob@example.com",
+    "name":"Bob",
+    "surname":"Brown",
+    "password":"example123"
 }
 ```
 
-* POST ``/login`` : connect you to your account.
+* POST ``/auth/login`` : connect you to your account.
 
-You need to provide this body :
+You need to provide this kind of body :
 
 ```json
 {
-
+    "password":"example",
+    "mail":"alice@example.com"
 }
 ```
 

@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { reviewCard, patchRevising } from '../controller/reviewsController.js'
+import { reviseCard, patchRevising } from '../controller/revisingsController.js'
 
 
 const router = Router()
 
-router.post('/:id', reviewCard)
+router.post('/:id', reviseCard)
 router.patch('/', patchRevising)
 
 export default router
