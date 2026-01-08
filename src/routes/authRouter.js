@@ -1,11 +1,12 @@
 import { Router } from 'express'
-import { loginUser, registerUser } from '../controller/authController.js'
+import { loginUser, registerUser, getMe } from '../controller/authController.js'
+import { authenticateToken } from '../middleware/authMiddleware.js'
 
 
 const router = Router()
 
 router.post('/register', registerUser)
 router.post('/login', loginUser) 
-//TODO route to get user info
+router.get('/me', authenticateToken, getMe)
 
 export default router

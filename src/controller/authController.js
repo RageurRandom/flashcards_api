@@ -52,6 +52,35 @@ export const registerUser = async (req, res)=>{
 
 
 /**
+ * Get current user info
+ * 
+ * @param {request} req 
+ * @param {response} res 
+ * @returns 
+ */
+export const getMe = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const [user] = await db.select().from(users).where(eq(users.id, userId));
+
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+
+        res.status(200).send({
+            email: user.mail,
+            name: user.name,
+            surname: user.surname,
+            role: user.role,
+        });
+    } catch (error) {
+        console.error("Error getting user info:", error);
+        res.status(500).send(error);
+    }
+}
+
+
+/**
  * Login a user
  * 
  * @param {request} req 
