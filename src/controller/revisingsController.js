@@ -12,7 +12,8 @@ import { and, eq } from "drizzle-orm"
  */
 export const reviseCard = async (req, res) => {
     try {
-        const { card_id, user_id } = req.body
+        const { user_id } = req.body
+        const { card_id } = req.params
         
         const [current_revising] = await db.select().from(revisings).where(and(eq(card_id, revisings.cardId), eq(user_id, revisings.userId)))
 
@@ -30,9 +31,9 @@ export const reviseCard = async (req, res) => {
         const current_level = current_revising.level | 0
         const new_level = Math.min(current_revising.level + 1, 5)
 
-        const updated_properties = { // new properties if found, else current
+        const updated_properties = {
             level: new_level,
-            last_revising_date: Date.now()
+            last_revising_date: Date.now() //TODO check if time is properly updated
         }
 
         console.log("if pas passé")
