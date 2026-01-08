@@ -79,25 +79,33 @@ You need to provide this body :
 
 ### Authentication
 
-* POST ``/register`` : create your account.
+* POST ``/auth/register`` : create your account.
 
 You need to provide this body :
 
 ```json
 {
-
+    "mail": "user@example.com",
+    "name": "John",
+    "surname": "Doe",
+    "password": "securepassword"
 }
 ```
 
-* POST ``/login`` : connect you to your account.
+* POST ``/auth/login`` : connect you to your account.
 
 You need to provide this body :
 
 ```json
 {
-
+    "mail": "user@example.com",
+    "password": "securepassword"
 }
 ```
+
+* GET ``/auth/me`` : return the current authenticated user's information.
+
+Requires an **Authorization** header with a Bearer token.
 
 ### Users
 
