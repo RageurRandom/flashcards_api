@@ -11,26 +11,10 @@ import { and, eq } from "drizzle-orm"
  * @returns 
  */
 export const reviseCard = async (req, res) => {
-    const { id } = req.params
-    const result = await createRevising(id, 'a1db4fed-9652-4772-94af-7359125355f1') // correspond a l'id de bob, temporaire
-    
-
-    res.status(200).json(result)
-
-    //TODO
-}
-
-/**
- * 
- * @param {request} req 
- * @param {response} res 
- * @returns 
- */
-export const patchRevising = async (req, res) => {
     try {
         const { card_id, user_id } = req.body
         
-        const current_revising = db.select().from(revisings).where(and(eq(card_id, revisings.cardId), eq(user_id, revisings.userId)))
+        const [current_revising] = await db.select().from(revisings).where(and(eq(card_id, revisings.cardId), eq(user_id, revisings.userId)))
 
         console.log("test, current revising = ", current_revising)
 
@@ -43,6 +27,7 @@ export const patchRevising = async (req, res) => {
             return
         }
 
+        const current_level = current_revising.level | 0
         const new_level = Math.min(current_revising.level + 1, 5)
 
         const updated_properties = { // new properties if found, else current
@@ -56,7 +41,7 @@ export const patchRevising = async (req, res) => {
         .where(and(eq(card_id, revisings.cardId), eq(user_id, revisings.userId)))
         .returning()
 
-        if(!revising){ // TODO doesn't work
+        if(!revising){
             return res
         }
 
@@ -72,8 +57,7 @@ async function createRevising(card_id, user_id){
     const res = await db.insert(revisings).values({
         cardId: card_id,
         userId: user_id,
-        //lastRevisingDate: Date.now(),
-        //createdAt: Date.now(),
+        lastRevisingDate: Date.now(),
         level: 1
     }).returning()
 
