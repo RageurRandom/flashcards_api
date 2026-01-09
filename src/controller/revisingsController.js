@@ -17,10 +17,7 @@ export const reviseCard = async (req, res) => {
         
         const [current_revising] = await db.select().from(revisings).where(and(eq(card_id, revisings.cardId), eq(user_id, revisings.userId)))
 
-        console.log("test, current revising = ", current_revising)
-
         if(!current_revising){
-            console.log("if passé")
             const result = await createRevising(card_id, user_id)
 
             res.status(200).json({message: "card updated", data: result})
@@ -36,7 +33,6 @@ export const reviseCard = async (req, res) => {
             last_revising_date: Date.now() //TODO check if time is properly updated
         }
 
-        console.log("if pas passé")
         const [revising] = await db.update(revisings)
         .set(updated_properties)
         .where(and(eq(card_id, revisings.cardId), eq(user_id, revisings.userId)))
@@ -50,15 +46,16 @@ export const reviseCard = async (req, res) => {
     } catch (error) {
         console.log(error)
 
-        res.status(500).send({error : "Failed to patch revising"})
+        res.status(500).send({error : "Failed to create or patch revising"})
     }
 }
 
 async function createRevising(card_id, user_id){
+    const now = Date.now()
     const res = await db.insert(revisings).values({
         cardId: card_id,
         userId: user_id,
-        lastRevisingDate: Date.now(),
+        lastRevisingDate: now,
         level: 1
     }).returning()
 
