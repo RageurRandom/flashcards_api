@@ -1,5 +1,5 @@
 import { db } from "../db/database.js"
-import { eq } from "drizzle-orm"
+import { and, eq, like, or, sql } from "drizzle-orm"
 import { request,response } from "express"
 import { collections } from "../db/schema.js"
 
@@ -88,8 +88,21 @@ export const deleteCollection = async (req, res) => {
  * @returns 
  */
 export const searchCollections = async (req, res) => {
-    res.status(201).send({message : "WIP"})
-    //TODO
+    const { user_id } = req.body //TODO change
+    const { querry } = req.params
+
+    try{
+        const result = await db.select().from(collections).where(and(
+            like( sql`lower(${collections.title})`, `%${querry.toLowerCase()}%`),
+            or(eq(collections.creatorId, user_id), eq(collections.isPublic, 1))
+        ))
+
+        res.status(200).json(result)
+    } catch(error){
+        console.error(error)
+
+        res.status(500).send({error : "Failed to querry collection"})
+    }
 }
 
 

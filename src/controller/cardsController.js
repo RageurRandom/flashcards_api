@@ -1,7 +1,9 @@
 import { db } from "../db/database.js"
-import { eq } from "drizzle-orm"
+import { and, eq, gte } from "drizzle-orm"
 import { request,response } from "express"
-import { cards } from "../db/schema.js"
+import { cards, collections, revisings } from "../db/schema.js"
+import { daysUntilNextRevising } from "../models/revising.js"
+
 
 
 /**
@@ -96,5 +98,58 @@ export const deleteCard = async (req, res) => {
         console.log(error)
 
         res.status(500).send({error : "Failed to delete card"})
+    }
+}
+
+
+/**
+ * 
+ * @param {request} req 
+ * @param {response} res 
+ * @returns 
+ */
+export const getFromCollection = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const result = await db.select().from(cards).where(eq(id, cards.collectionId))
+        res.status(200).json(result)
+    } catch (error) {
+        console.error(error)
+
+        res.status(500).send({error : "Failed to querry cards"})
+    }
+}
+
+/**
+ * 
+ * @param {request} req 
+ * @param {response} res 
+ * @returns 
+ */
+export const getToRevise = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const rows = await db.select().from(cards)
+        .where(eq(id, cards.collectionId)) 
+        .innerJoin(revisings, eq(revisings.cardId, cards.id)) //TODO add user
+
+        const result = rows.filter((row) => {
+            
+            const time_since_last_revising = Date.now() - row.revising.lastRevisingDate
+            const days_since_last_revising = time_since_last_revising / (1000 * 3600 * 24)
+
+            console.log(`jours depuis révision : ${days_since_last_revising}\ndate de dernière révision : ${new Date(row.revising.lastRevisingDate)}\n jours avant prochaine révision : ${daysUntilNextRevising(row.revising.level)}`)
+
+            return days_since_last_revising >= daysUntilNextRevising(row.revising.level)
+        }).map((row) => row.cards)
+        
+
+        res.status(200).json(result)
+    } catch (error) {
+        console.error(error)
+
+        res.status(500).send({error : "Failed to querry cards"})
     }
 }

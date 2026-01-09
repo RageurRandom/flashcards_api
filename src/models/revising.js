@@ -6,3 +6,7 @@ export const createRevisingSchema = z.object({
     level: z.number().min(1, "Level must be at least 1").max(5, "Level must be at most 5").optional(),
     lastRevisingDate: z.number().min(0, "Last Revising Date must be at least 0").optional(),
 });
+
+export const daysUntilNextRevising = (level) => {
+    return 2 ** (level - 1)
+}
