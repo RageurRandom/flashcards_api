@@ -119,3 +119,13 @@ export const getFromCollection = async (req, res) => {
         res.status(500).send({error : "Failed to querry cards"})
     }
 }
+
+/**
+ * 
+ * @param {request} req 
+ * @param {response} res 
+ * @returns 
+ */
+export const getToRevise = async (req, res) => {
+    res.status(200).send("WIP")
+}

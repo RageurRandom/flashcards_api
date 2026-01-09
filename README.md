@@ -64,6 +64,8 @@ You need to provide this body (besides the id, every field is optional):
 
 * GET ``/cards/from-collection/{id}`` : return every cards from the collection.
 
+* GET ``/cards/from-collection/{id}/to-revise`` : return cards from the collection that needs to be revised.
+
 * POST ``/cards`` : create a card.
 
 You need to provide this body :
