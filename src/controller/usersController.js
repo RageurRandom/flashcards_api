@@ -1,7 +1,7 @@
 import { request, response } from "express"
 import { db } from "../db/database.js"
 import { users } from "../db/schema.js"
-import { eq } from "drizzle-orm"
+import { eq, desc, asc } from "drizzle-orm"
 
 
 /**
@@ -36,7 +36,7 @@ export const getUser = async (req, res)=>{
  */
 export const getAllUsers = async (req, res)=>{
     try {
-        const result = await db.select().from(users).orderBy(users.createdAt);
+        const result = await db.select().from(users).orderBy(asc(users.surname));
 
         res.status(200).json(result);
     } catch (error) {
