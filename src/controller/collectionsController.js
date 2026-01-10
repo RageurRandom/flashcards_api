@@ -32,7 +32,7 @@ export const getCollection = async (req, res) => {
  */
 export const getMyCollections = async (req, res) => {
     try {
-        const result = await db.select().from(collections) // TODO select only collections created by the user
+        const result = await db.select().from(collections).where(eq(collections.creatorId, req.user.userId))
         res.status(200).json(result)
     } catch (error) {
         console.error(error)
@@ -50,7 +50,10 @@ export const getMyCollections = async (req, res) => {
  */
 export const createCollection = async (req, res) => {
     try {
-        const result = await db.insert(collections).values(req.body).returning() // TODO l'id user ne doit pas etre renseigné
+        const result = await db.insert(collections).values({
+            ...req.body,
+            creatorId: req.user.userId
+        }).returning()
 
         res.status(201).json({message:"Collection successfully created", data: result})
     } catch (error) {
@@ -88,13 +91,18 @@ export const deleteCollection = async (req, res) => {
  * @returns 
  */
 export const searchCollections = async (req, res) => {
-    const { user_id } = req.body //TODO change
+    const user_id = req.user ? req.user.userId : null;
     const { querry } = req.params
 
     try{
+        const searchCondition = like( sql`lower(${collections.title})`, `%${querry.toLowerCase()}%`);
+        const visibilityCondition = user_id 
+            ? or(eq(collections.creatorId, user_id), eq(collections.isPublic, 1))
+            : eq(collections.isPublic, 1);
+
         const result = await db.select().from(collections).where(and(
-            like( sql`lower(${collections.title})`, `%${querry.toLowerCase()}%`),
-            or(eq(collections.creatorId, user_id), eq(collections.isPublic, 1))
+            searchCondition,
+            visibilityCondition
         ))
 
         res.status(200).json(result)

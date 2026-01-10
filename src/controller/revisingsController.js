@@ -12,7 +12,7 @@ import { and, eq } from "drizzle-orm"
  */
 export const reviseCard = async (req, res) => {
     try {
-        const { user_id } = req.body //TODO change for the user's id, not the one put in the body
+        const user_id = req.user.userId
         const { card_id } = req.params
         
         const [current_revising] = await db.select().from(revisings).where(and(eq(card_id, revisings.cardId), eq(user_id, revisings.userId)))

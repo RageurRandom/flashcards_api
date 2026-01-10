@@ -7,6 +7,13 @@ export const createRevisingSchema = z.object({
     lastRevisingDate: z.number().min(0, "Last Revising Date must be at least 0").optional(),
 });
 
+export const reviseCardSchema = z.object({
+});
+
+export const reviseCardParamSchema = z.object({
+    card_id: z.uuid("Invalid Card ID"),
+});
+
 export const daysUntilNextRevising = (level) => {
     return 2 ** (level - 1)
 }
