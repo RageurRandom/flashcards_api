@@ -35,7 +35,7 @@ const seed = async ()=>{
 
         // Seed collections
         const collection1 = {
-            id: randomUUID,
+            id: randomUUID(),
             title: "Math",
             description: "Basic math flashcards",
             isPublic: 1,
