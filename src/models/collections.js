@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { db } from "../db/database";
-import { collections } from "../db/schema";
+import { db } from "../db/database.js";
+import { collections, users } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 
 export const createCollectionSchema = z.object({
@@ -9,8 +9,13 @@ export const createCollectionSchema = z.object({
     isPublic: z.boolean().optional(),
 });
 
-
-export const canAccessCollection = async (col_id, user_id)=> {
-    const [collection] = await db.select().from(collections).where(eq(collections.id, col_id))
-    return collection.isPublic === 1 || collection.creatorId === user_id
+/**
+ * 
+ * @param {collections} collection 
+ * @param user
+ * @returns {boolean}
+ */
+export const canAccessCollection = (collection, user)=> {
+    //console.log(`public : ${collection.isPublic === 1}\ncollection.creatorId === user.userId : ${collection.creatorId == user.userId}\nuser.role === "admin : ${user.role === "admin"}`)
+    return collection.isPublic === 1 || collection.creatorId == user.userId || user.role === "admin"
 }

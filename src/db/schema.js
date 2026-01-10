@@ -2,7 +2,7 @@ import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { randomUUID } from 'crypto'
 
 export const users = sqliteTable("users", {
-    id: text().primaryKey().default(() => randomUUID()),
+    id: text().primaryKey().$defaultFn(() => randomUUID()),
     mail: text().notNull(),
     name: text().notNull(),
     surname: text().notNull(),
@@ -15,7 +15,7 @@ export const users = sqliteTable("users", {
 });
 
 export const collections = sqliteTable("collections", {
-    id: text().primaryKey().default(() => randomUUID()),
+    id: text().primaryKey().$defaultFn(() => randomUUID()),
     title: text().notNull(),
     description: text().notNull(),
     isPublic: integer('is_public').notNull().default(0),
@@ -27,7 +27,7 @@ export const collections = sqliteTable("collections", {
 });
 
 export const cards = sqliteTable("cards", {
-    id: text().primaryKey().default(randomUUID()),
+    id: text().primaryKey().$defaultFn(()=>randomUUID()),
     recto: text().notNull(),
     verso: text().notNull(),
     rectoUrl: text('recto_url').notNull(),
