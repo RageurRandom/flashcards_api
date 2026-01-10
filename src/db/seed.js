@@ -35,14 +35,14 @@ const seed = async ()=>{
 
         // Seed collections
         const collection1 = {
-            id: "col-1",
+            id: randomUUID,
             title: "Math",
             description: "Basic math flashcards",
             isPublic: 1,
             creatorId: user1.id
         };
         const collection2 = {
-            id: "col-2",
+            id: randomUUID(),
             title: "History",
             description: "World history flashcards",
             isPublic: 0,
@@ -52,7 +52,7 @@ const seed = async ()=>{
 
         // Seed cards
         const card1 = {
-            id: "card-1",
+            id: randomUUID(),
             recto: "2+2",
             verso: "4",
             rectoUrl: "",
