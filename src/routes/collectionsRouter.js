@@ -4,7 +4,6 @@ import { getCollection, searchCollections, createCollection,
 import { authenticateToken } from "../middleware/authMiddleware.js"
 import { validateBody, validateParams } from "../middleware/validationMiddleware.js"
 import { createCollectionSchema, patchCollectionSchema, collectionIdParamSchema, searchCollectionParamSchema } from "../models/collections.js"
-import { authenticateToken } from '../middleware/authMiddleware.js'
 
 
 
