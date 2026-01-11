@@ -1,15 +1,16 @@
 import { Router } from "express"
 import { getCard, createCard, patchCard,
     deleteCard, getFromCollection, getToRevise } from "../controller/cardsController.js"
+import { authenticateToken } from "../middleware/authMiddleware.js"
 
 const router = Router()
 
-router.get('/:id', getCard)
-router.get('/from-collection/:id', getFromCollection)
-router.get('/from-collection/:id/to-revise', getToRevise)
-router.post('/', createCard)
-router.patch('/', patchCard)
-router.delete('/:id', deleteCard)
+router.get('/:id', authenticateToken, getCard)
+router.get('/from-collection/:id', authenticateToken, getFromCollection)
+router.get('/from-collection/:id/to-revise', authenticateToken, getToRevise)
+router.post('/', authenticateToken, createCard)
+router.patch('/', authenticateToken, patchCard)
+router.delete('/:id', authenticateToken, deleteCard)
 
 
 export default router
