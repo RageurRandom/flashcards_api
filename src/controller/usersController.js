@@ -1,7 +1,7 @@
 import { request, response } from "express"
 import { db } from "../db/database.js"
-import { users } from "../db/schema.js"
-import { eq, desc, asc } from "drizzle-orm"
+import { users, revisings } from "../db/schema.js"
+import { eq, asc } from "drizzle-orm"
 
 
 /**
@@ -58,6 +58,8 @@ export const deleteUser = async (req, res)=>{
     const { id } = req.params;
 
     try {
+        await db.delete(revisings).where(eq(revisings.userId, id))
+        
         const deleteCount = await db.delete(users).where(eq(users.id, id));
         if (deleteCount === 0) {
             return res.status(404).json({ error: "User not found" });

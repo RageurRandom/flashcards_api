@@ -14,7 +14,7 @@ export const createCardSchema = z.object({
 
 /**
  * 
- * @param {Int} card_id 
+ * @param {String} card_id 
  * @param user 
  * @returns {boolean}
  */
@@ -23,5 +23,6 @@ export const canAccessCard = async (card_id, user)=> {
                 .where(eq(card_id, cards.id))
                 .innerJoin(collections, eq(cards.collectionId, collections.id))
 
+    console.log(row);
     return canAccessCollection(row.collections, user)
 };

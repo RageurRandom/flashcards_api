@@ -1,8 +1,10 @@
 import { db } from "../db/database.js"
-import { and, eq, gte } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { request,response } from "express"
-import { cards, collections, revisings } from "../db/schema.js"
+import { cards, revisings, collections } from "../db/schema.js"
 import { daysUntilNextRevising } from "../models/revising.js"
+import { canAccessCard } from "../models/card.js"
+import { canAccessCollection } from "../models/collections.js"
 
 
 
@@ -15,8 +17,13 @@ import { daysUntilNextRevising } from "../models/revising.js"
 export const getCard = async (req, res) => {
     try {
         const { id } = req.params
+        console.log(id);
+        if(!await canAccessCard(id, req.user)){
+            return res.status(401).send({error : "Access to card forbidden"})
+        }
 
-        const result = await db.select().from(cards).where(eq(id, cards.id))
+        const [result] = await db.select().from(cards).where(eq(id, cards.id))
+
         res.status(200).json(result)
     } catch (error) {
         console.error(error)
@@ -35,8 +42,13 @@ export const getCard = async (req, res) => {
 export const patchCard = async (req, res) => {
     try {
         const { id } = req.body
-        
-        const [current_card] = db.select().from(cards).where(eq(id, cards.id))
+
+        if(!await canAccessCard(id, req.user)){
+            return res.status(401).send({error : "Access to card forbidden"})
+        }
+
+        const [current_card] = await db.select().from(cards).where(eq(id, cards.id))
+
 
         const updated_properties = { // new properties if found, else current
             recto: req.body.recto || current_card.recto,
@@ -71,6 +83,14 @@ export const patchCard = async (req, res) => {
  */
 export const createCard = async (req, res) => {
     try {
+        const { collectionId } = req.body
+
+        const [collection] = await db.select().from(collections).where(eq(collectionId, collections.id))
+
+        if(!canAccessCollection(collection, req.user)){
+            return res.status(401).send({error : "You can't add card to this collection"})
+        }
+
         const result = await db.insert(cards).values(req.body).returning()
 
         res.status(201).json({message:"Card successfully created", data: result})
@@ -91,6 +111,10 @@ export const createCard = async (req, res) => {
 export const deleteCard = async (req, res) => {
     try {
         const { id } = req.params
+
+        if(!await canAccessCard(id, req.user)){ //TODO isCardOwner
+            return res.status(401).send({error : "Access to card forbidden"})
+        }
         
         const result = await db.delete(cards).where(eq(id, cards.id)).returning()
         res.status(201).json({message:"Card successfully deleted", data: result})
@@ -112,6 +136,12 @@ export const getFromCollection = async (req, res) => {
     try {
         const { id } = req.params
 
+        const [collection] = await db.select().from(collections).where(eq(id, collections.id))
+
+        if(! canAccessCollection(collection, req.user)){
+            return res.status(401).send({error : "You can't access cards from this collection"})
+        }
+
         const result = await db.select().from(cards).where(eq(id, cards.collectionId))
         res.status(200).json(result)
     } catch (error) {
@@ -132,6 +162,12 @@ export const getToRevise = async (req, res) => {
         const { id } = req.params
         const user = req.user
 
+    const [collection] = await db.select().from(collections).where(eq(id, collections.id))
+
+        if(! canAccessCollection(collection, req.user)){
+            return res.status(401).send({error : "You can't access cards from this collection"})
+        }
+
         const rows = await db.select().from(cards)
         .innerJoin(revisings, eq(revisings.cardId, cards.id))
         .where(and(
@@ -143,8 +179,6 @@ export const getToRevise = async (req, res) => {
             
             const time_since_last_revising = Date.now() - row.revising.lastRevisingDate
             const days_since_last_revising = time_since_last_revising / (1000 * 3600 * 24)
-
-            console.log(`jours depuis révision : ${days_since_last_revising}\ndate de dernière révision : ${new Date(row.revising.lastRevisingDate)}\n jours avant prochaine révision : ${daysUntilNextRevising(row.revising.level)}`)
 
             return days_since_last_revising >= daysUntilNextRevising(row.revising.level)
         }).map((row) => row.cards)

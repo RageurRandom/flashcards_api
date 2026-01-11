@@ -1,7 +1,7 @@
 import { db } from "../db/database.js"
 import { and, eq, like, or, sql } from "drizzle-orm"
 import { request,response } from "express"
-import { collections } from "../db/schema.js"
+import { collections, cards } from "../db/schema.js"
 import { canAccessCollection } from "../models/collections.js"
 
 
@@ -16,8 +16,6 @@ export const getCollection = async (req, res) => {
         const { id } = req.params
 
         const [result] = await db.select().from(collections).where(eq(id, collections.id))
-
-        console.log(result, "\n=======\n", req.user)
 
         if(!canAccessCollection(result, req.user)){ //TODO check
             res.status(401).send({error:"You don't own this private collection"})
@@ -90,13 +88,13 @@ export const deleteCollection = async (req, res) => {
             const [current_collection] = await db.select().from(collections).where(eq(id, collections.id))
 
             if(current_collection.creatorId !== user.userId && user.role !== 'admin'){
-                res.status(401).send({error: "You don't own this collection"})
-
-                return
+                return res.status(401).send({error: "You don't own this collection"})
             }
             
-            const result = await db.delete(collections).where(eq(id, collections.id)).returning() //TODO
+            await db.delete(cards).where(eq(id, cards.collectionId))
+            const result = await db.delete(collections).where(eq(id, collections.id)).returning()
             res.status(201).json({message:"Collection successfully deleted", data: result})
+
         } catch (error) {
             console.log(error)
     
@@ -147,14 +145,12 @@ export const patchCollection = async (req, res) => {
         const [current_collection] = await db.select().from(collections).where(eq(id, collections.id))
 
         if(current_collection.creatorId !== user.userId && user.role !== 'admin'){
-            res.status(401).send("You don't own this collection")
-
-            return
+            return res.status(401).send("You don't own this collection")
         }
 
 
         // as is_public is a boolean, I can't process it like the other variables
-        const new_is_public = req.body.is_public !== undefined ? (req.body.is_public ? 1 : 0) : current_collection.isPublic
+        const new_is_public = req.body.isPublic !== undefined ? (req.body.isPublic ? 1 : 0) : current_collection.isPublic
 
         const updated_properties = { // new properties if found, else current
             title: req.body.title || current_collection.title,

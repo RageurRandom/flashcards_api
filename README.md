@@ -33,13 +33,13 @@ It will either be public collections or your collections.
 
 * POST ``/collections`` : create a collection.
 
-You need to provide this body (is_public is optional, it can be either 0 (false) or 1 (true)):
+You need to provide this body (isPublic is optional, it can be either 0 (false) or 1 (true)):
 
 ```json
 {
     "title": "My collection",
     "description": "this is my personal collection of cards",
-    "is_public": 1
+    "isPublic": 1
 }
 ```
 
@@ -54,7 +54,7 @@ You need to provide this body (besides the id, every field is optional):
     "id": "col-id",
     "title": "new title",
     "description": "put a new description here",
-    "is_public": 0
+    "isPublic": 0
 }
 ```
 
@@ -72,11 +72,11 @@ You need to provide this body :
 
 ```json
 {
-    "collection_id": "id of the card's collection",
+    "collectionId": "id of the card's collection",
     "recto": "put your question here",
     "verso": "put the response here",
-    "recto_url": "put an image url, optional",
-    "verso_url": "put an image url, optional"
+    "rectoUrl": "put an image url, optional",
+    "versoUrl": "put an image url, optional"
 }
 ```
 
@@ -91,8 +91,8 @@ You need to provide this body (every field beside the id is optional, put only t
     "id": "card-id",
     "recto": "put your question here",
     "verso": "put the response here",
-    "recto_url": "put an image url",
-    "verso_url": "put an image url"
+    "rectoUrl": "put an image url",
+    "versoUrl": "put an image url"
 }
 ```
 
