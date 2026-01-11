@@ -139,4 +139,4 @@ You need to be an **administrator** to use theses routes.
 * GET ``/users/{id}`` : return the user with the id.
 
 * DELETE ``/users/{id}`` : remove the user from the database.
-It will remove every private collections the user made, but not the public ones.
+It won't remove the user's collections, but it will remove it's revisings
