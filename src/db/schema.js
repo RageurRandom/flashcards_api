@@ -27,7 +27,8 @@ export const collections = sqliteTable("collections", {
 });
 
 export const cards = sqliteTable("cards", {
-    id: text().primaryKey().$defaultFn(()=>randomUUID()),
+
+    id: text().primaryKey().$defaultFn(() => randomUUID()),
     recto: text().notNull(),
     verso: text().notNull(),
     rectoUrl: text('recto_url').notNull(),

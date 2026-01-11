@@ -43,6 +43,7 @@ export const getMyCollections = async (req, res) => {
 
         const result = await db.select().from(collections).where(eq(collections.creatorId, user.userId))
 
+
         res.status(200).json(result)
     } catch (error) {
         console.error(error)
@@ -60,10 +61,11 @@ export const getMyCollections = async (req, res) => {
  */
 export const createCollection = async (req, res) => {
     try {
-        const user = req.user
-        req.body.creatorId = user.userId
 
-        const result = await db.insert(collections).values(req.body).returning()
+        const result = await db.insert(collections).values({
+            ...req.body,
+            creatorId: req.user.userId
+        }).returning()
 
         res.status(201).json({message:"Collection successfully created", data: result})
     } catch (error) {
@@ -110,6 +112,7 @@ export const deleteCollection = async (req, res) => {
  * @returns 
  */
 export const searchCollections = async (req, res) => {
+
     const user = req.user
     const { querry } = req.params
 
@@ -121,6 +124,7 @@ export const searchCollections = async (req, res) => {
         const result = rows.filter((collection)=> {
             return canAccessCollection(collection, user)
         })
+
 
         res.status(200).json(result)
     } catch(error){

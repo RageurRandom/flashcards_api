@@ -13,7 +13,8 @@ import { canAccessCard } from "../models/card.js"
  */
 export const reviseCard = async (req, res) => {
     try {
-        const { userId } = req.user //TODO change for the user's id, not the one put in the body
+        const { userId } = req.user
+
         const { card_id } = req.params
         
         const [current_revising] = await db.select().from(revisings).where(and(eq(card_id, revisings.cardId), eq(userId, revisings.userId)))
