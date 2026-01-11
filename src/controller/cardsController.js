@@ -43,7 +43,7 @@ export const patchCard = async (req, res) => {
     try {
         const { id } = req.body
 
-        if(!await canAccessCard(id, req.user)){
+        if(!await isCardOwner(id, req.user)){
             return res.status(401).send({error : "Access to card forbidden"})
         }
 
@@ -87,7 +87,7 @@ export const createCard = async (req, res) => {
 
         const [collection] = await db.select().from(collections).where(eq(collectionId, collections.id))
 
-        if(!canAccessCollection(collection, req.user)){
+        if(collection.creatorId !== req.user.userId && req.user.role !== 'admin'){
             return res.status(401).send({error : "You can't add card to this collection"})
         }
 
@@ -111,8 +111,8 @@ export const createCard = async (req, res) => {
 export const deleteCard = async (req, res) => {
     try {
         const { id } = req.params
-
-        if(!await canAccessCard(id, req.user)){ //TODO isCardOwner
+        console.log("not done")
+        if(!await isCardOwner(id, req.user)){
             return res.status(401).send({error : "Access to card forbidden"})
         }
         
@@ -190,4 +190,16 @@ export const getToRevise = async (req, res) => {
 
         res.status(500).send({error : "Failed to querry cards"})
     }
+}
+
+async function isCardOwner(card_id, user) {
+    const [result] = await db
+        .select({ ownerId: collections.creatorId })
+        .from(cards)
+        .innerJoin(collections, eq(collections.id, cards.collectionId))
+        .where(eq(cards.id, card_id));
+
+    const owner_id = result?.ownerId;
+
+    return user.role === 'admin' || user.userId === owner_id;
 }
