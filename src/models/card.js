@@ -1,4 +1,8 @@
 import { z } from "zod";
+import { canAccessCollection } from "./collections.js";
+import { db } from "../db/database.js";
+import { cards, collections } from "../db/schema.js"
+import { eq } from "drizzle-orm"
 
 export const createCardSchema = z.object({
     recto: z.string().min(1, "Recto is required"),
@@ -7,3 +11,17 @@ export const createCardSchema = z.object({
     versoUrl: z.string().url("Verso URL must be a valid URL").optional().or(z.literal("")),
     collectionId: z.string().min(1, "Collection ID is required"),
 });
+
+/**
+ * 
+ * @param {Int} card_id 
+ * @param user 
+ * @returns {boolean}
+ */
+export const canAccessCard = async (card_id, user)=> {
+    const [row] = await db.select().from(cards)
+                .where(eq(card_id, cards.id))
+                .innerJoin(collections, eq(cards.collectionId, collections.id))
+
+    return canAccessCollection(row.collections, user)
+};

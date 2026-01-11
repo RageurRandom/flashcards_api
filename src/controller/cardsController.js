@@ -36,13 +36,13 @@ export const patchCard = async (req, res) => {
     try {
         const { id } = req.body
         
-        const current_card = db.select().from(cards).where(eq(id, cards.id))
+        const [current_card] = db.select().from(cards).where(eq(id, cards.id))
 
         const updated_properties = { // new properties if found, else current
             recto: req.body.recto || current_card.recto,
             verso: req.body.verso || current_card.verso,
-            recto_url: req.body.recto_url || current_card.recto_url,
-            verso_url: req.body.verso_url || current_card.verso_url
+            rectoUrl: req.body.recto_url || current_card.recto_url,
+            versoUrl: req.body.verso_url || current_card.verso_url
         }
 
         const [card] = await db.update(cards)
@@ -130,10 +130,14 @@ export const getFromCollection = async (req, res) => {
 export const getToRevise = async (req, res) => {
     try {
         const { id } = req.params
+        const user = req.user
 
         const rows = await db.select().from(cards)
-        .where(eq(id, cards.collectionId)) 
-        .innerJoin(revisings, eq(revisings.cardId, cards.id)) //TODO add user
+        .innerJoin(revisings, eq(revisings.cardId, cards.id))
+        .where(and(
+            eq(id, cards.collectionId),
+            eq(user.userId, revisings.userId)
+        ))
 
         const result = rows.filter((row) => {
             

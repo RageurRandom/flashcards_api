@@ -2,6 +2,7 @@ import { request, response } from "express"
 import { db } from "../db/database.js"
 import { revisings } from "../db/schema.js"
 import { and, eq } from "drizzle-orm"
+import { canAccessCard } from "../models/card.js"
 
 
 /**
@@ -18,6 +19,14 @@ export const reviseCard = async (req, res) => {
         const [current_revising] = await db.select().from(revisings).where(and(eq(card_id, revisings.cardId), eq(userId, revisings.userId)))
 
         if(!current_revising){
+            
+            const canAccess = await canAccessCard(card_id, req.user)
+            if(!canAccess){
+                res.status(401).send({error: "You can't access this private card"})
+
+                return
+            }
+
             const result = await createRevising(card_id, userId)
 
             res.status(200).json({message: "card updated", data: result})
